@@ -50,7 +50,7 @@ cls.prototype.update = async function (condition,opts,no_updated_at) {
     if(!no_updated_at) opts.updated_at = opts.updated_at || new Date().getTime();
     if(this.is_log) console.log(`【DB update ${this.DB.name}】:\n`,condition,`\n-----\n`,opts);
 
-    let data = await this.DbFunc.update(condition,opts);
+    let data = await this.DbFunc.updateMany(condition,opts);
     return data.n;
 };
 
@@ -125,6 +125,8 @@ cls.prototype.count = function (opts) {
  * @returns *
  */
 cls.prototype.list = async function (opts,sort,field,toFormatFunction) {
+    opts = opts || {};
+
     let skip,limit,
         per_page = parseInt(opts.per_page),
         page = parseInt(opts.page);
@@ -160,36 +162,60 @@ cls.prototype.detail = async function (id,toFormatFunction) {
 };
 
 cls.prototype.toFormat = function (model) {
-    let info;
-    try {
-        info = model && model.toObject();
-    }catch (err) {
-        info = model || {};
-    }
+    if(!model) return;
+    let is_arr = Boolean(model.constructor == Array);
+    if(!is_arr) model = [model];
 
-    if(info) {
-        info.id = info._id && info._id.toString();
-        delete info._id;
-        delete info.__v;
-    }
+    model = model.map(item => {
+        let info;
+        try {info = item && item.toObject();}
+        catch (err) {info = item || {};}
 
-    return info;
+        if(info) {
+            info.id = info._id && info._id.toString();
+            delete info._id;
+            delete info.__v;
+        }
+
+        return info;
+    });
+
+    if(is_arr) return model;
+    return model[0];
 };
 
 cls.prototype.toListFormat = function (model) {
-    let info = this.toFormat(model);
+    if(!model) return;
+    let is_arr = Boolean(model.constructor == Array);
+    if(!is_arr) model = [model];
 
-    return {
-        id: info.id || '',
-        name: info.name || ''
-    }
+    model = model.map(item => {
+        let info = this.toFormat(item);
+
+        return {
+            id: info.id || '',
+            name: info.name || ''
+        };
+    });
+
+    if(is_arr) return model;
+    return model[0];
 };
 
 cls.prototype.toDetailFormat = function (model) {
-    return Object.assign(
-        this.toFormat(model),
-        this.toListFormat(model)
-    );
+    if(!model) return;
+    let is_arr = Boolean(model.constructor == Array);
+    if(!is_arr) model = [model];
+
+    model = model.map(item => {
+        return Object.assign(
+            this.toFormat(item),
+            this.toListFormat(item)
+        );
+    });
+
+    if(is_arr) return model;
+    return model[0];
 };
 
 module.exports = cls;

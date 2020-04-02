@@ -58,6 +58,7 @@ cls.prototype.createConnection = function () {
     }
 
     if(!dbs[this.server]) {
+        mongoose.set('useCreateIndex', true);
         dbs[this.server] = mongoose.createConnection(mongodbs[this.server].connection, {useNewUrlParser: true,useUnifiedTopology:true});
     }
     return dbs[this.server];

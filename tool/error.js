@@ -347,10 +347,10 @@ class ErrorClass{
             is_warn = Boolean([this.error_log_type.route,this.error_log_type.redis].indexOf(type) > -1),
             level = (type == this.error_log_type.info)
                 ? 'info'
-                : (is_warn?'warn':'error'),
+                : (is_warn?'warning':'error'),
             winston_msg = {
                 timestamp: time,
-                level,
+                level: (level == 'warning') ? 'warn': level,
                 type,
                 message: msg
             };
@@ -367,8 +367,35 @@ class ErrorClass{
 
         //推送信息
         if(is_subscribe) {
-            let info = EtcLog.subscribe.info || {};
+            let info = EtcLog.subscribe.info || {},
+                title = info.title || '无标题';
             switch (EtcLog.subscribe.type) {
+                case 'dingTalk':
+                    const DingTalk = require('../external/dingTalk');
+                    DingTalk.send({
+                        msgtype: 'markdown',
+                        markdown: {
+                            title: `${title}信息`,
+                            text: `#### ${title}信息\n` +
+                            `> 时间：${time}\n\n` +
+                            `> 级别：${level}\n\n` +
+                            `> 类型：${type}\n\n` +
+                            `> 详情：${msg}`
+                        }
+                    }, EtcLog.subscribe.access_token).catch(err => {});
+                    break;
+                case 'kafka':
+                    const Kafka = require('../external/kafka');
+                    Kafka.send(EtcLog.subscribe.topic, [{
+                        value: JSON.stringify({
+                            reported_at: time,
+                            level,
+                            service_name: title,
+                            message: msg,
+                            path: ''
+                        })
+                    }]).catch(err => {});
+                    break;
                 case 'es':
                     const Es = require('../external/es');
                     Es.send(Object.assign(winston_msg,info));

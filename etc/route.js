@@ -27,7 +27,7 @@ module.exports = {
         'post/:file': `${modulesRoot}/:file/index`,
         'get/:file/:func': function (params) {
             if(fs.existsSync(path.resolve(__dirname,`../${modulesRoot}/${params.file}.js`))) return `${modulesRoot}/:file/:func`;
-            else return `:file/:func`;
+            else return `:view/:file/:func`;
         },
         'post/:file/:func': `${modulesRoot}/:file/:func`,
         'get/:first/:second/*':  `:first/:second/`

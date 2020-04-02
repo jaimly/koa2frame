@@ -71,28 +71,31 @@ UtilsClass.prototype.arrayToObject = function (arr,key,children_key) {
 
 /**
  * 获取对象的值
- * @param opt array、object｜对象
- * @param key string、array｜键
+ * @param opt ｜array、object｜必须｜对象
+ * @param key ｜string、array｜必须｜键
+ * @param val ｜*｜非必须｜值。若值一致，返回该对象。
  * @returns {*}
  */
-UtilsClass.prototype.getValue = function (opt,key) {
+UtilsClass.prototype.getValue = function (opt,key,val) {
     if(!opt || !key) return;
 
     switch (opt.constructor) {
         case Array:
             for(let i=0;i<opt.length;i++) {
                 let item = opt[i];
-                if(item && item.constructor == Object){
-                    let value = this.getValue(item,key);
-                    if(value) return value;
+                if(item && typeof item == 'object'){
+                    let value = this.getValue(item,key,val);
+                    if(value) return val?item:value;
                 }
             }
             break;
         case Object:
         default:
-            let ks = key.split('.');
-            ks.map(kk => {
-                opt = opt && (opt[kk] || opt[kk.toString()]);
+            let ks = key.split('.'),temp;
+            ks.map((kk,i) => {
+                temp = opt && (opt[kk] || opt[kk.toString()]);
+                if(i != ks.length-1 || !val) opt = temp;
+                else if(temp != val) opt = null;
             });
             return opt;
     }

@@ -27,6 +27,7 @@ class cls {
         this.timeout = timeout;
         this.is_log = Etc.log && Etc.log.external;
         this.jwt = info.jwt;
+        this.info = info;
     }
 }
 
@@ -113,7 +114,7 @@ cls.prototype.request = async function (method,api,info,back_format, err_msg) {
     if(this.is_log && headers) console.log('headers:' , headers);
 
     let option = {
-        encoding: encoding && (encoding == 'gb2312' ? null : encoding),
+        encoding: encoding ? (encoding == 'gb2312' ? null : encoding) : undefined,
         url,
         headers,
         method,
@@ -131,7 +132,7 @@ cls.prototype.request = async function (method,api,info,back_format, err_msg) {
             if(!main.timeout && (during_time > timeout_time))
                 Err.log(Err.error_log_type.http,`接口响应超过${timeout_time}毫秒:${during_time}`,url);
 
-            if(msg && encoding) msg = Iconv.decode(msg, encoding).toString();
+            if(encoding) msg = Iconv.decode(msg, encoding).toString();
             let back = main.getBackInfo({err,res,msg},url,body,back_format,err_msg);
             if(back.ok == 0) return resolve(back.data);
             else reject(back);

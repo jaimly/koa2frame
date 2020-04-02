@@ -12,9 +12,24 @@ class cls {
         this.verifyFormat = {
             integer_format,
             number_format,
-            keyword: {
+            require_string: {
                 "type": "string",
-                "description": "关键字"
+                "minLength": 1
+            },
+            files: {
+                "type": "object",
+                "properties": {
+                    "file": {
+                        "type": "object",
+                        "required": ["path","type","name","size"]
+                    }
+                }
+            },
+            keyword:{
+                keyword: {
+                    "type": "string",
+                    "description": "关键字"
+                }
             },
             page: {
                 "per_page": integer_format,

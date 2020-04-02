@@ -43,13 +43,17 @@ BodyClass.prototype.initRender = function () {
 };
 
 BodyClass.prototype.initJwt = function () {
+    let etc_jwt = Etc.middle && Etc.middle.jwt;
+    if(!etc_jwt) return;
+
     try {
         const jwt = require('jsonwebtoken');
 
         let ctx = this.ctx,
             authorization = ctx.headers['authorization'],
-            jwt_code = authorization.split(' ')[1];
-        ctx.jwt = jwt.decode(jwt_code);
+            jwt_code = (authorization && authorization.split(' ')[1])
+                || (etc_jwt.key && ctx.query[etc_jwt.key]);
+        if(jwt_code) ctx.jwt = jwt.decode(jwt_code);
     }catch(err) {}
 };
 
@@ -71,16 +75,16 @@ BodyClass.prototype.runFunction = async function () {
         let full_path = global.rootPath + val;
         if((Path.extname( ctx.url ) == '.art') || fs.existsSync(`${full_path}.art`))
             return ctx.render(this.val,{});
-        else if(!fs.existsSync(`${global.rootPath + path}.js`))
+
+        val = camelCase(val);
+        path = val.slice(0,val.lastIndexOf('/'));
+        if(!fs.existsSync(`${global.rootPath + path}.js`))
             return this.runResource();
-        else {
-            val = camelCase(val);
-            path = val.slice(0,val.lastIndexOf('/'));
-            let func_name = val.slice(val.lastIndexOf('/')+1);
-            file = require(global.rootPath + path);
-            func = file[func_name];
-            Boolean(file.constructor && func.constructor);
-        }
+
+        let func_name = val.slice(val.lastIndexOf('/')+1);
+        file = require(global.rootPath + path);
+        func = file[func_name];
+        Boolean(file.constructor && func.constructor);
     }catch (err) {
         if(this.is_log) console.trace(err);
         ctx.response.status = 404;

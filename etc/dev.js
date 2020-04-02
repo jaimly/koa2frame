@@ -62,6 +62,9 @@ module.exports = {
         passport: {
             session_key: 'dt-session',
             local: 'domain/user.findOne'
+        },
+        jwt: {
+            key: 'jwt'
         }
     },
 
@@ -88,6 +91,7 @@ module.exports = {
                 }
             }
         },
+        //oracle 需要根据不同系统来确认node的版本。可能需要多次调试。建议linux先由8.6.0开始；windows用10以上版本.
         oracle: {
             micro_application: {
                 connection: {

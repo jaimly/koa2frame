@@ -54,23 +54,24 @@ module.exports = async function (root_path) {
         await redis.init();
         await redis.set(['test:test:a'],'test',1000);
 
+        //todo: 外部调用koa2frame问题
+    //}).then(async () => {
+    //    ///开启其他任务
+    //    if(!Etc.task) return;
+    //    let Task; try{Task = require(global.rootPath + 'tool/task');}catch(err){return;}
+    //    return await Promise.all(Object.keys(Task).map(async task_name => {
+    //        let is_start = Etc.task.start || Etc.task[task_name];
+    //        if(!is_start) return;
+    //        await Task[task_name]();
+    //        console.log(`Task [${task_name}] started.`);
+    //    }));
+
     }).then(() => {
         ///启动服务
         const port = Etc.http && Etc.http.port || '3003';
         Koa.listen(port, function () {
             console.log(`run at port ${port}, success!`);
         });
-
-    }).then(() => {
-        ///开启其他任务
-        if(!Etc.task) return;
-        let Task; try{Task = require('./tool/task');}catch(err){return;}
-        return Promise.all(Object.keys(Task).map(async task_name => {
-            let is_start = Etc.task.start || Etc.task[task_name];
-            if(!is_start) return;
-            await Task[task_name]();
-            console.log(`Task [${task_name}] started.`);
-        }));
 
     }).catch(err => {
         console.trace('run fail:\n',err);
