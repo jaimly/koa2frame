@@ -8,18 +8,23 @@ const RouteConfig = require(global.rootPath + 'etc/route');
 const Etc = require(global.rootPath + 'etc/'+require(global.rootPath + 'etc/env'));
 const Err = require('./error');
 const Body = require('./body');
+const is_log = Etc.log && Etc.log.route;
 
 class RouteClass {
     constructor () {
-        this.is_log =  Etc.log && Etc.log.route;
     }
 }
+
+RouteClass.init = function (KoaRouter) {
+    RouteClass.initPreFix(KoaRouter);
+    RouteClass.initMap(KoaRouter);
+};
 
 /**
  * 处理路由权限
  * @returns {*}
  */
-RouteClass.prototype.initAllow = async function (ctx,next) {
+RouteClass.initAllow = async function (ctx,next) {
     if(RouteConfig.allow && typeof RouteConfig.error == 'function') {
         let paths = await RouteConfig.allow(ctx), flag;
         if (paths) {
@@ -38,7 +43,7 @@ RouteClass.prototype.initAllow = async function (ctx,next) {
 /**
  * 处理路由错误
  */
-RouteClass.prototype.initError = async function (ctx,next) {
+RouteClass.initError = async function (ctx,next) {
     if(ctx.response.status == 404) {
         let req = ctx.request;
         ctx.response.body = Err.get(Err.route_error, {
@@ -59,14 +64,14 @@ RouteClass.prototype.initError = async function (ctx,next) {
 /**
  * 处理路由前缀
  */
-RouteClass.prototype.initPreFix = async function (koaRouter) {
+RouteClass.initPreFix = async function (koaRouter) {
     if(RouteConfig.prefix) koaRouter.prefix(RouteConfig.prefix);
 };
 
 /**
  * 处理路由规则表
  */
-RouteClass.prototype.initMap = async function (koaRouter) {
+RouteClass.initMap = async function (koaRouter) {
     if(!RouteConfig.map) return;
 
     Object.keys(RouteConfig.map).map(k => {
@@ -75,7 +80,7 @@ RouteClass.prototype.initMap = async function (koaRouter) {
 
         koaRouter[method](url,async (ctx, next) => {
             let back,val = routeHandler(ctx,RouteConfig.map[k]),start_time = Date.now();
-            if(this.is_log) console.log(method + '  ' + url+'; route:'+ val);
+            if(is_log) console.log(method + '  ' + url+'; route:'+ val);
 
             try {
                 let body = new Body(ctx, val);//不要写在use里，否则路由出错，会返回body的数据
@@ -126,4 +131,4 @@ function routeHandler(ctx,rt) {
     return rt;
 }
 
-module.exports = new RouteClass();
+module.exports = RouteClass;

@@ -1,6 +1,6 @@
 'use strict';
 
-const fs = require('fs');
+const Fs = require('fs');
 
 module.exports = {
     /**
@@ -9,7 +9,8 @@ module.exports = {
      */
     get: function (table_name) {
         try {
-            return module.exports.getDB(table_name).dbModel;
+            const db = module.exports.getDB(table_name);
+            return db.dbModel || db;
         }catch (err) {}
     },
 
@@ -25,12 +26,12 @@ module.exports = {
                 err_msg += (err+'\n');
             }
         }else {
-            let files = [''].concat(fs.readdirSync(root_path)), i;
+            let files = [''].concat(Fs.readdirSync(root_path)), i;
             for (i = 0; i < files.length; i++) {
                 if(files[i])files[i] += '/';
                 let file_path = `${root_path}${files[i]}${name_path}`;
 
-                if (fs.existsSync(file_path)) {
+                if (Fs.existsSync(file_path)) {
                     try {
                         let file = require(file_path);
                         if (file && file.server) return file;
@@ -42,5 +43,16 @@ module.exports = {
         }
 
         throw new Error(`${err_msg}请检查数据库配置，或检查数据库是否能连接`);
+    },
+
+    init: async function (app) {
+        const Etc = require(global.rootPath + 'etc/'+require(global.rootPath + 'etc/env'));
+        if(!Etc.db) return;
+        return Promise.all(Object.keys(Etc.db).map(async key => {
+            if(Fs.existsSync(`${__dirname}/${key}/base.js`)) {
+                app[key] = require(`./${key}/base`);
+                await app[key].init();
+            }
+        }));
     }
 };

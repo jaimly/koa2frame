@@ -70,11 +70,24 @@ module.exports = {
 
     /**
      * 数据库配置
-     * @param 支持 mongodb、mysql、oracle.若不需要全部，可在package.json中去除对应第三方库。
+     * @param 支持 mongodb、mysql、oracle、typeorm
      * @param [数据库类型].[数据库名]  ｜object｜数据库名
      * @param [数据库类型].[数据库名].connection  ｜*｜连接信息，各种数据库格式如下。
      */
     db: {
+        typeorm: {
+            micro_application: {
+                connection: {
+                    type: 'mysql',
+                    host: 'localhost',
+                    port: '3306',
+                    username: 'root',
+                    password: 'root',
+                    database: 'micro_application',
+                    synchronize: true
+                }
+            }
+        },
         mongodb: {
             micro_application: {
                 connection: 'mongodb://localhost:27017/micro_application'

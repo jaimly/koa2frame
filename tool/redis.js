@@ -8,24 +8,25 @@ const Redis = require('ioredis'),
     crypto = require('crypto'),
     Err = require('../tool/error'),
     Ut = require('../tool/utils'),
-    Etc = Ut.getEtc();
+    Etc = Ut.getEtc(),
+    DbConfig = Etc.redis;
 
 class RedisClass {
     constructor() {
-        let config = Etc.redis;
+        if(!DbConfig) return;
         this.is_log = Etc.log && Etc.log.redis;
 
-        switch (config && config.constructor) {
+        switch (DbConfig && DbConfig.constructor) {
             case Object:
-                this.client = new Redis(config);
+                this.client = new Redis(DbConfig);
                 break;
             case Array:
-                this.client = new Redis.Cluster(config);
+                this.client = new Redis.Cluster(DbConfig);
         }
     }
 
     init() {
-        return new Promise((resolve,reject) => {
+        if(DbConfig) return new Promise((resolve,reject) => {
             this.client.on('ready',() => {
                 console.log('redis connect success.');
                 return resolve(this);

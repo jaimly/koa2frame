@@ -5,6 +5,7 @@
  */
 
 const Request = require('request'),
+    Fs = require('fs'),
     Iconv = require("iconv-lite"),
     Err = require('../tool/error'),
     Ut = require('../tool/utils'),
@@ -220,5 +221,15 @@ cls.prototype.getBackInfo = function (info,url,body,back_format,err_msg) {
     if(!Ut.isValue(msg.ok)) return Err.get(Err.ok,msg.data);
     return msg;
 };
+
+/**
+ * 注册第三方库供外部使用
+ */
+cls.init = async function (app) {
+    if(!Etc.external) return;
+    Object.keys(Etc.external).map(key => {
+        if(Fs.existsSync(`${__dirname}/${key}.js`)) app[key] = require(`./${key}`);
+    });
+}
 
 module.exports = cls;

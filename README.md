@@ -1,14 +1,22 @@
 # 框架 #
 ## 简介 ##
-> 基于koa框架，增加了路由规则，body分析，tv4验证，mongo数据库，http请求。
+> 基于koa2的框架，增加了路由规则，body分析，tv4参数验证，mongo、mysql、oracle数据库，http请求
+> 包含各样插件：jwt，passport，session，redis，winston，kafka，elasticsearch,art-template
 > 可直接作为项目使用，亦可以作为第三方库使用。
 
 ## 部署 ##
-1. 下载代码库： npm install koa2frame
+**版本库**
+1. node >=12.16.3<14.0.0 (请不要更换npm的仓库地址)
+2. mongodb 版本 4.2.6 （请不要随意升级，高低版本不兼容）
+3. redis 版本 >= 2.6.12
+
+**代码**
+1. 下载代码库： npm install koa2frame-dt
 2. 添加第三方库： 在根目录下运行：npm install
-3. 修改配置： etc->env.js里面指向的etc下文件的配置（参考下面的etc配置说明）
-4. 启动项目： 使用node8.6.0以上版本运行app.js文件（项目每次修改需要重新启动）
-5. 浏览器访问： http://localhost:{port}{prefix}/test 返回 “success”即成功。(port为etc里面配置的端口,prefix为etc-route里的prefix值)
+3. 按需添加数据库 npm install mongoose(mysql/oracledb) --save  具体参考版本看 package.json
+4. 修改配置： etc->env.js里面指向的etc下文件的配置（参考下面的etc配置说明）
+5. 启动项目： 开启index.js最后的注释，使用node运行index.s文件（项目每次修改需要重新启动）
+6. 浏览器访问： http://localhost:{port}{prefix}/test 返回 “success”即成功。(port为etc里面配置的端口,prefix为etc-route里的prefix值)
 
 ## 研发人员使用 ##
 1. 在etc->route.js配置路由
@@ -60,3 +68,5 @@
  - 添加mysql、oracle数据库类；添加钉钉、kafka发送类
 + 版本1.4.1
  - 修复网页转码bug
++ 版本1.4.2
+ - 添加typeorm；整改框架结构

@@ -19,6 +19,7 @@ class cls {
 cls.prototype.create = async function (opts,toFormatFunction) {
     if(this.is_log) console.log(`【DB create ${this.DB.name}】:\n`,opts);
 
+    if(!opts || !Object.keys(opts).length) return Promise.reject(Err.get(Err.insert_failure,'插入数据为空'));
     let data = await this.DbFunc.create(opts).catch(err => {
         if(err && err.name == 'ValidationError') {
             return Promise.reject(Err.get(Err.db_fail,err.errors));
@@ -34,15 +35,27 @@ cls.prototype.delete = async function (condition) {
     condition = this.toCondition(condition);
     if(this.is_log) console.log(`【DB delete ${this.DB.name}】:\n`,condition);
 
-    let data = await this.DbFunc.remove(condition);
-    return data.n;
+    let data;
+    try {
+        data = await this.DbFunc.remove(condition);
+    }catch(err) {
+        data = await this.DbFunc.delete(condition);
+    }
+
+    if(this.DB.db_type == 'mongodb') return data.n;
+    return data;
 };
 
 cls.prototype.updateById = async function (opts) {
-    let _id = opts.id;
+    opts = opts || {};
+    const id = opts.id || opts._id;
     delete opts.id;
+    delete opts._id;
 
-    return await this.update({_id},opts);
+    const condition = {};
+    if(this.DB.db_type == 'mongodb') condition._id = id;
+    else condition.id = id;
+    return await this.update(condition,opts);
 };
 
 cls.prototype.update = async function (condition,opts,no_updated_at) {
@@ -51,7 +64,8 @@ cls.prototype.update = async function (condition,opts,no_updated_at) {
     if(this.is_log) console.log(`【DB update ${this.DB.name}】:\n`,condition,`\n-----\n`,opts);
 
     let data = await this.DbFunc.updateMany(condition,opts);
-    return data.n;
+    if(this.DB.db_type == 'mongodb') return data.n;
+    return data;
 };
 
 /**
@@ -61,18 +75,13 @@ cls.prototype.update = async function (condition,opts,no_updated_at) {
  * @param fuzzy_key ｜非必须｜array｜模糊搜索项
  */
 cls.prototype.toCondition = function (opts,id_key,fuzzy_key) {
+    opts = opts || {};
     let condition = {},value;
     Object.keys(opts).map(k => {
         value = opts[k];
         if(!Ut.isValue(value) || value === '') return;
 
         switch (k) {
-            case 'id':
-            case id_key+'_id':
-                if(value.constructor == Array) value = {$in:value};
-                condition._id = value;
-                delete condition[k];
-                break;
             case id_key+'_name':
             case 'keyword':
             case 'name':
@@ -91,6 +100,14 @@ cls.prototype.toCondition = function (opts,id_key,fuzzy_key) {
                 condition[db_key][is_start?'$gte':'$lte'] = parseInt(value);
                 delete condition[k];
                 break;
+            case 'id':
+            case id_key+'_id':
+                if(this.DB.db_type == 'mongodb') {
+                    if(value.constructor == Array) value = {$in:value};
+                    condition._id = value;
+                    delete condition[k];
+                    break;
+                }
             default:
                 condition[k] = opts[k];
         }
@@ -155,7 +172,7 @@ cls.prototype.list = async function (opts,sort,field,toFormatFunction) {
 cls.prototype.detail = async function (id,toFormatFunction) {
     if(this.is_log) console.log(`【DB detail ${this.DB.name}】:\n`,id);
 
-    let data = await this.DbFunc.findById(id);
+    let data = id && await this.DbFunc.findById(id);
     if(!data) return Promise.reject(Err.get(Err.no_records_found));
 
     return this[toFormatFunction || 'toDetailFormat'](data);
@@ -172,7 +189,7 @@ cls.prototype.toFormat = function (model) {
         catch (err) {info = item || {};}
 
         if(info) {
-            info.id = info._id && info._id.toString();
+            info.id = info.id || info._id && info._id.toString();
             delete info._id;
             delete info.__v;
         }

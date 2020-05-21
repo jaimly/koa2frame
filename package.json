@@ -1,45 +1,62 @@
 {
-  "name": "koa2frame",
-  "description": "koa2应用层框架",
-  "main": "index.js",
-  "version": "1.4.1",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Jesno0/koa2frame.git"
-  },
-  "engines": {
-    "node": ">= 8.6.0"
-  },
-  "license": "MIT",
+  "author": "jaimly <jaimly@163.com>",
   "dependencies": {
-    "art-template": "^4.13.2",
     "koa": "^2.5.2",
     "koa-body": "^4.0.4",
-    "koa-passport": "^4.1.3",
     "koa-router": "^7.4.0",
-    "koa-session2": "2.2.10",
-    "mongoose": "^5.2.13",
+    "ioredis": "^4.9.0",
     "objectid": "^3.2.1",
-    "passport-local": "1.0.0",
     "qs": "^6.7.0",
     "request": "^2.88.0",
+    "jsonwebtoken": "^8.4.0",
     "tv4": "^1.3.0",
+    "art-template": "^4.13.2",
+    "kafkajs": "^1.10.0",
     "winston": "^3.2.1",
-    "winston-elasticsearch": "^0.8.2"
+    "winston-elasticsearch": "^0.8.2",
+    "koa-passport": "^4.1.3",
+    "passport-local": "1.0.0",
+    "koa-session2": "2.2.10",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.24"
   },
   "dependencies_note": {
     "koa": "【必须】框架",
     "koa-router": "【必须】路由处理",
     "koa-body": "【必须】body数据分析",
     "qs": "用于兼容query数组格式a[0]=m&a[1]=n",
+    "ioredis": "redis缓存。需要Redis版本 >= 2.6.12",
     "tv4": "参数验证",
     "objectid": "用于生成mongodb唯一值",
-    "mongoose": "mongodb数据库",
+    "mysql": "mysql数据库类：^2.16.0",
+    "oracledb": "oracle数据库类：2.3.0",
+    "mongoose": "mongodb数据库：^5.2.13",
     "request": "http请求类",
+    "jsonwebtoken": "jwt验证",
     "art-template": "前端模板",
+    "kafkajs": "kafka连接类",
     "winston-elasticsearch": "es日志连接类",
     "koa-passport": "passport中间件",
     "passport-local": "passport中间件储存类型",
-    "koa-session2": "session类"
-  }
+    "koa-session2": "session类",
+    "typeorm": "数据库统一管理类",
+    "reflect-metadata": "typeorm附属类"
+  },
+  "deprecated": false,
+  "description": "基于koa2的框架",
+  "engines": {
+    "node": ">= 10.16.0"
+  },
+  "main": "index.js",
+  "name": "koa2frame-dt",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@192.168.0.85:1022/jaimly/koa2frame_dt.git"
+  },
+  "version": "1.0.19",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "ISC"
 }
