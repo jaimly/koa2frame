@@ -53,7 +53,7 @@
     "type": "git",
     "url": "ssh://git@192.168.0.85:1022/jaimly/koa2frame_dt.git"
   },
-  "version": "1.0.19",
+  "version": "1.4.2",
   "devDependencies": {},
   "scripts": {
     "start": "node index.js"
