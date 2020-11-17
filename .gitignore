@@ -2,6 +2,7 @@
 ######################
 .settings/
 .idea/
+.vscode
 
 # version controller #
 ######################

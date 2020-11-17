@@ -17,6 +17,19 @@ module.exports = {
     },
 
     /**
+     * 设置路由
+     * @param static ｜array｜非必须｜静态路由
+     * @param static.dir ｜string｜必须｜根目录下文件夹路径
+     * @param static.router ｜string｜必须｜路由。
+     */
+    route: {
+        static: [{
+            dir:'public',
+            router:'/public/'
+        }]
+    },
+
+    /**
      * 控制台打印日志
      * @param route ｜boolean｜非必须｜默认false。接收到的请求信息
      * @param db ｜boolean｜非必须｜默认false。数据库增删查改信息

@@ -4,13 +4,15 @@
  * 任务列表
  */
 
-const Ut = require('../tool/utils'),
+const Path = require('path'),
+    Ut = require('../tool/utils'),
     Etc = Ut.getEtc();
 
  module.exports.init = async function () {
     if(!Etc.task) return;
+    if(Path.resolve(global.rootPath) == Path.resolve(__dirname,'../')) return;
 
-    let Task; try{Task = require(global.rootPath + 'tool/task');}catch(err){return;}
+    let Task; try{Task = require(`${global.rootPath}tool/task`);}catch(err){return;}
     return await Promise.all(Object.keys(Task).map(async task_name => {
         if(!Etc.task.start && !Etc.task[task_name]) return;
         console.log(`Task [${task_name}] start...`);

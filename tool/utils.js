@@ -107,7 +107,7 @@ UtilsClass.prototype.getValue = function (opt,key,val) {
  * @returns {boolean}
  */
 UtilsClass.prototype.isValue = function(obj) {
-    if(obj == undefined || obj == null) return false;
+    if(obj === undefined || obj === null) return false;
     else if(obj.constructor == Number && isNaN(obj)) return false;
     return true;
 };

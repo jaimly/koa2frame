@@ -10,6 +10,7 @@
 const Etc = require(global.rootPath + 'etc/'+require(global.rootPath + 'etc/env')),
     KoaLib = require('koa'),
     Koa = new KoaLib(),
+    RouteStatic = require('koa-static-router'),
     KoaRouterLib = require('koa-router'),
     KoaRouter = new KoaRouterLib(),
     Route = require('./tool/route'),
@@ -21,6 +22,7 @@ Route.init(KoaRouter);
 Koa.use(KoaBody({multipart: true}))
     .use(Passport.init(Koa))
     .use(Route.initAllow)
+    .use(RouteStatic(Etc.route && Etc.route.static))
     .use(KoaRouter.routes())
     .use(Route.initError)
     .use(KoaRouter.allowedMethods())
