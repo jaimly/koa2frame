@@ -21,9 +21,24 @@ class cls {
                 "properties": {
                     "file": {
                         "type": "object",
+                        "properties": {
+                            "path": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "size": {
+                                "type": "integer",
+                                "maximum": 102400000
+                            }
+                        },
                         "required": ["path","type","name","size"]
                     }
-                }
+                },"required": ["file"]
             },
             keyword:{
                 keyword: {
@@ -40,6 +55,30 @@ class cls {
                 "updated_end_time": number_format,
                 "created_start_time": number_format,
                 "created_end_time": number_format
+            },
+            remarks: {
+                "type": "string",
+                "maxLength": 255
+            },
+            minString: {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+            },
+            positiveInt: {
+                "oneOf":[
+                    {"type":"integer", "minimum": 1},
+                    {"type":"string", "minLength": 1}
+                ]
+            },
+            positiveIntAndZero: {
+                "oneOf":[
+                    {"type":"integer", "minimum": 0},
+                    {"type":"string", "minLength": 1}
+                ]
+            },
+            booleanInt: {
+                "enum": [0,1,"0","1"]
             }
         };
     }

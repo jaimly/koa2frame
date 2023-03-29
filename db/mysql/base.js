@@ -41,7 +41,7 @@ class MysqlClass {
      * @param connecting ｜非必须｜boolean｜默认false：断开连接。
      * @returns {Promise}
      */
-    exec (sql,connecting) {
+    async exec (sql,connecting) {
         let cnn = await MysqlClass.connect(this.server);
     
         return await new Promise((resolve, reject) => {
@@ -75,7 +75,7 @@ MysqlClass.connect = async function(server){
     return new Promise((resolve,reject) => {
         console.log(`db:${TYPE}:${server} connect...`);
 
-        const pool = dbs[server] && dbs[server].pool;
+        let pool = dbs[server] && dbs[server].pool;
         if(!pool) {
             pool = Mysql.createPool(DbConfig[server].connection);
             if (!pool) {

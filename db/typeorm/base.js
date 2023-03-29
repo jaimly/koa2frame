@@ -90,7 +90,7 @@ TypeormClass.connect = async function(server) {
 
         await Promise.all(entities.map(async entitie => {
             entitie.connection = dbs[server];
-            entitie.dbModel = entitie.connection.getRepository(entitie.model);
+            entitie.dbModel = entitie.connection.getRepository(entitie.schema);
             entitie.dbModel.create = entitie.dbModel.save;
             entitie.dbModel.updateMany = entitie.dbModel.update;
             await entitie.initTable();

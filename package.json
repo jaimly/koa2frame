@@ -55,7 +55,7 @@
     "type": "git",
     "url": "https://github.com/Jesno0/koa2frame.git"
   },
-  "version": "1.4.2",
+  "version": "1.4.3",
   "devDependencies": {
     "run-func": "^1.0.5"
   },

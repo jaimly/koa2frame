@@ -225,6 +225,30 @@ UtilsClass.prototype.formatDataType = function(val,model){
     }
 };
 
+UtilsClass.prototype.randomString = function (len,words) {    
+    len = len || 16;
+    words = words || "abcdefghijklmnopqrstuvwxyz0123456789";
+    let back = "";
+    while(back.length < len) {
+        back += words.charAt(Math.floor(Math.random() * words.length));
+    }
+    return back;
+};
+
+UtilsClass.prototype.getID = function (now,len,mark) {
+    if(!len || len < -1) len = 16;
+    const time_len = 10;
+    now = String(now || new Date().getTime()).slice(0,time_len);
+    if(len <= time_len) return now.slice(-len);
+    
+    mark = String(mark || "");
+    
+    const ran_len = len-time_len-mark.length;
+    const ran = ran_len ? exports.randomString(ran_len) : "";
+
+    return (now + mark + ran).slice(0,len);
+};
+
 /**
  * 获取一个时间的相关时间（星期一，星期日，下星期一等等）
  * @param time
