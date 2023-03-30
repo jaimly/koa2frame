@@ -244,7 +244,7 @@ UtilsClass.prototype.getID = function (now,len,mark) {
     mark = String(mark || "");
     
     const ran_len = len-time_len-mark.length;
-    const ran = ran_len ? exports.randomString(ran_len) : "";
+    const ran = ran_len ? this.randomString(ran_len) : "";
 
     return (now + mark + ran).slice(0,len);
 };
