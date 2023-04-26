@@ -19,7 +19,7 @@
     "passport-local": "1.0.0",
     "koa-session2": "2.2.10",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "0.2.31"
+    "typeorm": "0.3.15"
   },
   "dependencies_note": {
     "koa": "【必须】框架",
