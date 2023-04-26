@@ -80,6 +80,7 @@ RouteClass.initMap = async function (koaRouter) {
 
         koaRouter[method](url,async (ctx, next) => {
             let back,val = routeHandler(ctx,RouteConfig.map[k]),start_time = Date.now();
+            if(!val) return;
             if(is_log) console.log(method + '  ' + url+'; route:'+ val);
 
             try {
@@ -122,7 +123,7 @@ function routeHandler(ctx,rt) {
     if(typeof rt == 'function') rt = rt(ctx.params);
     //替换变量
     let param;
-    Object.keys(ctx.params).map(k => {
+    if(rt) Object.keys(ctx.params).map(k => {
         param = ctx.params[k];
         if(k == 0) rt += param;
         rt = rt.replace(new RegExp(':'+k,'g'),param);
