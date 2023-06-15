@@ -53,7 +53,10 @@ BodyClass.prototype.initJwt = function () {
             authorization = ctx.headers['authorization'],
             jwt_code = (authorization && authorization.split(' ')[1])
                 || (etc_jwt.key && ctx.query[etc_jwt.key]);
-        if(jwt_code) ctx.jwt = jwt.decode(jwt_code);
+        if(jwt_code) {
+            ctx.request.jwt = jwt_code;
+            ctx.jwt = jwt.decode(jwt_code);
+        }
     }catch(err) {}
 };
 
